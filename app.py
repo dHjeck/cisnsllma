@@ -4,7 +4,7 @@ import subprocess
 import threading
 import os
 from flask_cors import CORS
-import json
+
 
 app = Flask(__name__)
 CORS().init_app(app)
@@ -21,6 +21,7 @@ class LLMAApi(MethodView):
             process.wait()
         t = threading.Thread(target=run_subprocess)
         t.start()
+        print("LLMA is running...")
         return {
             'status': 'success',
             'message': 'LLMA is runing!',
@@ -55,6 +56,10 @@ class TestResult(MethodView):
         else:
             return {'status': 'error', 'message': '文件不存在或者还没有运行完成，请耐心等待。'}
 
+class Score(MethodView):
+    def get(self):
+        return jsonify({'score': 10})
+
 #运行执行main.py
 LLMA_view = LLMAApi.as_view('llma_api')
 app.add_url_rule('/llma/scan', view_func=LLMA_view, methods=['GET'])
@@ -64,7 +69,9 @@ app.add_url_rule('/llma/download', view_func=download_view, methods=['GET'])
 #注册结果显示
 Result_view = TestResult.as_view('test_result')
 app.add_url_rule('/llma/textresult', view_func=Result_view, methods=['GET'])
-
+# 注册评分
+Score_view = Score.as_view('score')
+app.add_url_rule('/llma/score', view_func=Score_view, methods=['GET'])
 
 
 
