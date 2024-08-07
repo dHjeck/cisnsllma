@@ -39,7 +39,7 @@ def save_result(result):
 def get_ip():
     config = configparser.ConfigParser()
     config.read('./settings/ip.ini', encoding='utf-8')
-    ip = config.get('target', 'ip')
+    ip = config.get('server', 'ip')
     return ip
 
 
