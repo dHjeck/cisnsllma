@@ -5,6 +5,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import DPA_Env
+import main as CTB
+import baidu_chatglm2
+import commandrun
 
 #创建智能体
 class QLearningAgent:
@@ -68,9 +71,16 @@ if __name__ == "__main__":
     agent = QLearningAgent(env)      #创建代理
     batch_size = 1
     episodes = 5    #定义训练次数
+    result_c = "error"
+    timeout = 10
     for e in range(1, episodes):
         state = env.reset()
         state = np.reshape(state, [1, env.observation_Space.n])
+        # if CTB.judge_env() == "empty":
+        #     ip = CTB.get_ip()
+        #     while result_c == "error":
+        #         result_c = baidu_chatglm2.chat_with_baidu_command(ip)
+        #     result_c = commandrun.run_command_with_timeout(result_c, timeout)
         for _ in range(10):
             action = agent.act(state) #代理选择动作
             next_state, reward, done = env.step(action) #执行动作返回参数
