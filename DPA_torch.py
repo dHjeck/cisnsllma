@@ -76,11 +76,11 @@ if __name__ == "__main__":
     for e in range(1, episodes):
         state = env.reset()
         state = np.reshape(state, [1, env.observation_Space.n])
-        # if CTB.judge_env() == "empty":
-        #     ip = CTB.get_ip()
-        #     while result_c == "error":
-        #         result_c = baidu_chatglm2.chat_with_baidu_command(ip)
-        #     result_c = commandrun.run_command_with_timeout(result_c, timeout)
+        if CTB.judge_env() == "empty":
+            ip = CTB.get_ip()
+            while result_c == "error":
+                result_c = baidu_chatglm2.chat_with_baidu_command(ip)
+            result_c = commandrun.run_command_with_timeout(result_c, timeout)
         for _ in range(10):
             action = agent.act(state) #代理选择动作
             next_state, reward, done = env.step(action) #执行动作返回参数

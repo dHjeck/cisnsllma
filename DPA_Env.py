@@ -103,7 +103,7 @@ class Network_explorer(gym.Env):
         ip = CTB.get_ip()
         command_line = "error"
         if self.flags==0:
-            Composecommandconfig.Cf_main(self)
+            # Composecommandconfig.Cf_main(self)
             self.flags = 1
         # for i in range(0,3):
         #     if action == i:
