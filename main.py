@@ -23,7 +23,7 @@ time_current_HMS = time.strftime('%H-%M-%S', time.localtime())
 def save_log(result):
     file_name = log_path + "/" + time_current_YMD + '.txt'
     with open(file_name, 'a') as file:
-        file.write(result)
+        file.write(result + "\n")
         file.close()
     logging.info("Log save done!")
 
@@ -31,7 +31,7 @@ def save_log(result):
 def save_result(result):
     file_name = result_path + "/" + time_current_YMD + time_current_HMS + '.txt'
     with open(file_name, 'w') as file:
-        file.write(result)
+        file.write(result + "\n")
         file.close()
     logging.info("Result save done!")
 
@@ -153,6 +153,8 @@ def get_command():
     # save_log(input1)
     # save_log(result)
     # return result
+
+    
 
 
 if __name__ == "__main__":

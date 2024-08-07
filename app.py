@@ -1,9 +1,10 @@
-from flask import Flask, send_file, jsonify
+from flask import Flask, send_file, jsonify, request
 from flask.views import View, MethodView
 import subprocess
 import threading
 import os
 from flask_cors import CORS
+import configparser
 
 
 app = Flask(__name__)
@@ -39,6 +40,23 @@ class ResultDownload(MethodView):
             return send_file(file, as_attachment=True)
         else:
             return {'status': 'error', 'message': '文件不存在或者还没有运行完成，请耐心等待。'}
+
+#修改目标ip地址
+@app.route('/api/submit', methods=['POST'])
+def submit():
+    data = request.json
+    targetIP = data.get('target')
+    print(targetIP)
+    config = configparser.ConfigParser()
+    config.read('./settings/ip.ini', encoding='utf-8')
+    print(config['server']['ip'])
+    config.set('server', 'ip', str(targetIP))
+    config.write(open('./settings/ip.ini', "w"))
+    print(config['server']['ip'])
+
+    return jsonify({'status': 'success', 'message': 'success'})
+
+
 
 class TestResult(MethodView):
     def get(self):
