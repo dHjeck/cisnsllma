@@ -81,6 +81,9 @@ if __name__ == "__main__":
             while result_c == "error":
                 result_c = baidu_chatglm2.chat_with_baidu_command(ip)
             result_c = commandrun.run_command_with_timeout(result_c, timeout)
+            tmp = result_c
+            while result_c == "error" or result_c == tmp:
+                result_c = baidu_chatglm2.chat_with_baidu_nmap(result_c)
         for _ in range(10):
             action = agent.act(state) #代理选择动作
             next_state, reward, done = env.step(action) #执行动作返回参数
