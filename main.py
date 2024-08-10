@@ -124,22 +124,20 @@ def get_command():
     if judge_env() == "empty":
         logging.warning("env is empty!")
         input1 = ip
-        result = baidu_chatglm2.chat_with_baidu_command(input1)
+        while result == "error":
+            result = baidu_chatglm2.chat_with_baidu_command(input1)
+        save_result(result)
+        save_log(input1)
+        save_log(result)
+        result = result.replace("\n", "")
+        result = commandrun.run_command_with_timeout(result, timeout)
+        result = baidu_chatglm2.chat_with_baidu_nmap(result)
         if result == "error":
             get_command()
         else:
             save_result(result)
-            save_log(input1)
             save_log(result)
-            result = result.replace("\n", "")
-            result = commandrun.run_command_with_timeout(result, timeout)
-            result = baidu_chatglm2.chat_with_baidu_nmap(result)
-            if result == "error":
-                get_command()
-            else:
-                save_result(result)
-                save_log(result)
-                return 
+            return 
     else:
         logging.info("env is not empty!")
         env_check()

@@ -1,5 +1,6 @@
 import random
 import gym
+import time
 import numpy as np
 import torch
 import torch.nn as nn
@@ -8,6 +9,9 @@ import DPA_Env
 import main as CTB
 import baidu_chatglm2
 import commandrun
+import os
+
+
 
 #创建智能体
 class QLearningAgent:
@@ -66,6 +70,19 @@ class QLearningAgent:
     def save(self, name):
         torch.save(self.model.state_dict(), name)
 
+def save_filename():
+    time_current_HMS = time.strftime('%H-%M-%S', time.localtime())
+    name = "./model/" + time_current_HMS + ".pth"
+    return name
+
+def load_filename():
+    path = "./model"
+    lists=os.listdir(path)
+    lists.sort(key=lambda fn: os.path.getmtime(path + "/" + fn)
+                if not os.path.isdir(path + "/" + fn) else 0)
+    file = os.path.join(path, lists[-1])
+    return file
+
 if __name__ == "__main__":
     env = DPA_Env.Network_explorer()    #使用自定义的环境
     agent = QLearningAgent(env)      #创建代理
@@ -73,24 +90,54 @@ if __name__ == "__main__":
     episodes = 5    #定义训练次数
     result_c = "error"
     timeout = 10
-    for e in range(1, episodes):
-        state = env.reset()
-        state = np.reshape(state, [1, env.observation_Space.n])
-        if CTB.judge_env() == "empty":
-            ip = CTB.get_ip()
-            while result_c == "error":
-                result_c = baidu_chatglm2.chat_with_baidu_command(ip)
-            result_c = commandrun.run_command_with_timeout(result_c, timeout)
-            tmp = result_c
-            while result_c == "error" or result_c == tmp:
-                result_c = baidu_chatglm2.chat_with_baidu_nmap(result_c)
-        for _ in range(10):
-            action = agent.act(state) #代理选择动作
-            next_state, reward, done = env.step(action) #执行动作返回参数
-            next_state = np.reshape([2, env.observation_Space.n], next_state)
-            agent.remember(state, action, reward, next_state, done)
-            state = next_state
-            if done:
-                print("episode: {}/{}, score: {}".format(e, episodes, reward))
-                break
-        agent.replay(batch_size)
+    train =  1 #是否重新训练 0 不训练 1 训练
+    if train == 1:
+        for e in range(1, episodes):
+            state = env.reset()
+            state = np.reshape(state, [1, env.observation_Space.n])
+            if CTB.judge_env() == "empty":
+                ip = CTB.get_ip()
+                while result_c == "error":
+                    result_c = baidu_chatglm2.chat_with_baidu_command(ip)
+                result_c = commandrun.run_command_with_timeout(result_c, timeout)
+                tmp = result_c
+                while result_c == "error" or result_c == tmp:
+                    try:
+                        result_c = baidu_chatglm2.chat_with_baidu_nmap(result_c)
+                    except:
+                        command_line = "error"
+            for _ in range(10):
+                action = agent.act(state) #代理选择动作
+                next_state, reward, done = env.step(action) #执行动作返回参数
+                next_state = np.reshape([2, env.observation_Space.n], next_state)
+                agent.remember(state, action, reward, next_state, done)
+                state = next_state
+                if done:
+                    print("episode: {}/{}, score: {}".format(e, episodes, reward))
+                    break
+            agent.replay(batch_size)
+        agent.save(save_filename())
+    else:
+        agent.load(load_filename())
+        for e in range(1, episodes):
+            state = env.reset()
+            state = np.reshape(state, [1, env.observation_Space.n])
+            if CTB.judge_env() == "empty":
+                ip = CTB.get_ip()
+                while result_c == "error":
+                    result_c = baidu_chatglm2.chat_with_baidu_command(ip)
+                result_c = commandrun.run_command_with_timeout(result_c, timeout)
+                tmp = result_c
+                while result_c == "error" or result_c == tmp:
+                    result_c = baidu_chatglm2.chat_with_baidu_nmap(result_c)
+            for _ in range(10):
+                action = agent.act(state) #代理选择动作
+                next_state, reward, done = env.step(action) #执行动作返回参数
+                next_state = np.reshape([2, env.observation_Space.n], next_state)
+                agent.remember(state, action, reward, next_state, done)
+                state = next_state
+                if done:
+                    print("episode: {}/{}, score: {}".format(e, episodes, reward))
+                    break
+            agent.replay(batch_size)
+        agent.save(save_filename())

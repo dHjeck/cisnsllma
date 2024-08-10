@@ -212,6 +212,22 @@ def chat_with_baidu_sql(ip):
             return "error"
     else:
         return baidu_qfan(prompt)
+    
+def get_score(input):
+    prompt = f'''
+我将会给你一段内容，请根据输入的内容分评价目标主机的安全性并且打分，满分为10分，使用CVSS4.0标准，只允许输出分数，不许输出其他无关内容。
+{input}
+输出格式为：
+```
+分数为： 分
+```
+'''
+    result = baidu_qfan(prompt)
+    result = result.split("分数为：")
+    if len(result) >= 2:
+        return result[1]
+    else:
+        return "error"
 
 
 if __name__ == '__main__':

@@ -112,14 +112,20 @@ class Network_explorer(gym.Env):
         #         result = subprocess.run(command_line, shell=True, stdout=subprocess.PIPE, text=True, universal_newlines=True)
         if action == 0:
             while command_line == "error":
-                command_line = baidu_chatglm2.chat_with_baidu_command(ip)
+                try:
+                    command_line = baidu_chatglm2.chat_with_baidu_command(ip)
+                except:
+                    command_line = "error"
             command_line = command_line.replace("\n", "")
             CTB.save_log(command_line)
             CTB.save_result(command_line)
             result_c = commandrun.run_command_with_timeout(command_line, timeout)
             tmp = result_c
             while result_c == tmp:
-                result_c = baidu_chatglm2.chat_with_baidu_nmap(result_c)
+                try:
+                    result_c = baidu_chatglm2.chat_with_baidu_nmap(result_c)
+                except:
+                    command_line = tmp
             CTB.save_result(result_c)
             CTB.save_log(result_c)
         
@@ -130,7 +136,10 @@ class Network_explorer(gym.Env):
             with open("./settings/users.txt", encoding='utf-8') as file:
                 for user in file.readlines():
                     while command_line == "error":
-                        command_line = baidu_chatglm2.chat_with_baidu_ftp(ip, user, password)
+                        try:
+                            command_line = baidu_chatglm2.chat_with_baidu_ftp(ip, user, password)
+                        except:
+                            command_line = "error"
                     command_line = command_line.replace("\n", "")
                     result_c = commandrun.run_command_with_timeout(command_line, timeout)
                     CTB.save_result(result_c)
@@ -140,7 +149,10 @@ class Network_explorer(gym.Env):
         
         if action == 2:
             while command_line == "error":
-                command_line = baidu_chatglm2.chat_with_baidu_sql(ip)
+                try:
+                    command_line = baidu_chatglm2.chat_with_baidu_sql(ip)
+                except:
+                    pass
             command_line = command_line.replace("\n", "")
             result_c = commandrun.run_command_with_timeout(command_line, timeout)
             CTB.save_result(result_c)
@@ -153,18 +165,19 @@ class Network_explorer(gym.Env):
             python_exe_path = sys.executable
             print(python_exe_path)
             while command_line == "error":
-                command_line = baidu_chatglm2.chat_with_baidu_xss(ip, xss_path, python_exe_path)
+                try:
+                    command_line = baidu_chatglm2.chat_with_baidu_xss(ip, xss_path, python_exe_path)
+                except:
+                    command_line = "error"
             command_line = command_line.replace("\n", "")
             result_c = commandrun.run_command_with_timeout(command_line, timeout)
             CTB.save_result(result_c)
             CTB.save_log(command_line)
             CTB.save_log(result_c)
-
-        # out_to_file = result.stdout
-
-        # with open("scan_port_list.txt", "w") as output_file:
-        #     output_file.write(out_to_file)
-        self.state = 2
+        if result_c != "" or result_c != "error":
+            self.state = 2
+        else:
+            self.state = 1
 
         if self.state == self.goal_state:
             reward = 1.0
