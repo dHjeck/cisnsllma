@@ -19,7 +19,8 @@ def index():
 class LLMAApi(MethodView):
     def get(self):
         def run_subprocess():
-            process = subprocess.Popen(['python', 'main.py'], stdout=subprocess.PIPE, shell=True)
+            command = "python DPA_torch.py"
+            process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
             process.wait()
         t = threading.Thread(target=run_subprocess)
         t.start()
