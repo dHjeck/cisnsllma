@@ -86,13 +86,13 @@ class Network_explorer(gym.Env):
     def __init__(self):
         super(Network_explorer, self).__init__()
 
-        self.observation_Space = spaces.Discrete(5)
+        self.observation_Space = spaces.Discrete(5) # 状态空间
 
-        self.action_space = spaces.Discrete(3)
+        self.action_space = spaces.Discrete(4) # 动作选择空间
 
         self.state = None
 
-        self.goal_state = 2
+        self.goal_state = 2 # 目标状态
 
         self.command_line = []
 
@@ -102,14 +102,6 @@ class Network_explorer(gym.Env):
         global result
         ip = CTB.get_ip()
         command_line = "error"
-        if self.flags==0:
-            # Composecommandconfig.Cf_main(self)
-            self.flags = 1
-        # for i in range(0,3):
-        #     if action == i:
-        #         print(i)
-        #         command_line = self.command_line[i]
-        #         result = subprocess.run(command_line, shell=True, stdout=subprocess.PIPE, text=True, universal_newlines=True)
         if action == 0:
             while command_line == "error":
                 try:

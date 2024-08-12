@@ -13,7 +13,7 @@ import os
 
 
 
-#创建智能体
+#创建强化学习Q-learn算法的智能体
 class QLearningAgent:
     def __init__(self, env):
         self.env = env

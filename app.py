@@ -16,6 +16,7 @@ def index():
     return 'Hello, World!'
 
 
+# 主体运行
 class LLMAApi(MethodView):
     def get(self):
         def run_subprocess():
@@ -30,12 +31,14 @@ class LLMAApi(MethodView):
             'message': 'LLMA is runing!',
         }
 
+
+# 下载log文件
 class ResultDownload(MethodView):
     def get(self):
-        path = ".\\result"
+        path = "./log"
         lists=os.listdir(path)
-        lists.sort(key=lambda fn: os.path.getmtime(path + "\\" + fn)
-                    if not os.path.isdir(path + "\\" + fn) else 0)
+        lists.sort(key=lambda fn: os.path.getmtime(path + "/" + fn)
+                    if not os.path.isdir(path + "/" + fn) else 0)
         file = os.path.join(path, lists[-1])
         print("完整路径", file)
         if os.path.exists(file):
@@ -59,10 +62,10 @@ def submit():
     return jsonify({'status': 'success', 'message': 'success'})
 
 
-
+# 显示log内容
 class TestResult(MethodView):
     def get(self):
-        path = "./result"
+        path = "./log"
         lists=os.listdir(path)
         lists.sort(key=lambda fn: os.path.getmtime(path + "/" + fn)
                     if not os.path.isdir(path + "/" + fn) else 0)
@@ -76,6 +79,8 @@ class TestResult(MethodView):
         else:
             return {'status': 'error', 'message': '文件不存在或者还没有运行完成，请耐心等待。'}
 
+
+# 总结得分
 class Score(MethodView):
     def get(self):
         log = ""
