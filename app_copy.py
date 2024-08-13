@@ -15,9 +15,10 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="root",
-        database="root"
+        password="2486h2486y",
+        database="login"
     )
+
 db_config = {
     'user': 'root',
     'password': 'root',
@@ -34,27 +35,18 @@ def login():
     data = request.json
     username = data.get('username')
     password = data.get('password')
-    
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    
-    try:
-        cursor.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))
-        user = cursor.fetchone()
-        
-        if user:
-            # 登录成功，返回 token 或其他数据
-            return jsonify({'success': True, 'data': 'fake_token'})
-        else:
-            return jsonify({'success': False, 'message': 'Invalid username or password'})
-    
-    except Exception as e:
-        print(f"Error: {e}")
-        return jsonify({'success': False, 'message': 'Internal server error'})
-    
-    finally:
-        cursor.close()
-        conn.close()
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password))
+    user = cursor.fetchone()
+
+    if user:
+        # 假设生成一个简单的 token
+        token = "dummy_token"
+        return jsonify({"success": True, "token": token, "roles": ["user"]})
+    else:
+        return jsonify({"success": False, "message": "用户名或密码错误"})
 
         
 # 主体运行
