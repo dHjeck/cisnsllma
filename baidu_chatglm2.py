@@ -1,13 +1,19 @@
 import requests
 import json
 import logging
+import os
 
 #设置log
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-#百度的api key
-API_KEY = "adLhPcloliub9zaiPPw6MoNl"
-SECRET_KEY = "szo3kryIODFcYXCtYBObFiLb7QauQ49N"
+#百度的api key：从环境变量读取，不要硬编码到代码中
+# export BAIDU_API_KEY=你的AK
+# export BAIDU_SECRET_KEY=你的SK
+API_KEY = os.environ.get("BAIDU_API_KEY")
+SECRET_KEY = os.environ.get("BAIDU_SECRET_KEY")
+
+if not API_KEY or not SECRET_KEY:
+    logging.warning("未设置 BAIDU_API_KEY / BAIDU_SECRET_KEY 环境变量，百度 API 调用将失败")
 
 
 #获取token数量

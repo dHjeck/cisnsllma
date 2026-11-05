@@ -1,0 +1,13 @@
+# 密钥与凭据
+.env
+*.pem
+settings/password*.txt
+
+# 日志与运行结果
+log/
+result/
+__pycache__/
+*.pyc
+
+# 模型权重
+model/*.pth
